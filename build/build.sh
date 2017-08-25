@@ -15,16 +15,14 @@ echo "building binary for $@"
 em++ \
 -O3 \
 -Oz \
+--emit-symbol-map \
 --llvm-lto 1 \
 -s MODULARIZE=1 \
 -s NO_EXIT_RUNTIME=1 \
 -s ERROR_ON_UNDEFINED_SYMBOLS=1 \
+-s EXPORTED_FUNCTIONS="['_dummy']" \
 --bind \
 ./.libs/libprotobuf.bc \
 ./libcld3.a \
--I $TMPDIR/protobuf-emscripten/3.1.0/src/.libs/libprotobuf.so.11.0.0 \
--s EXPORTED_FUNCTIONS="['_dummy']" \
 --pre-js ./preprocessor.js \
 $@
-
-#--closure 1 \
