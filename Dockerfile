@@ -19,10 +19,10 @@ COPY . /cld-$TARGET/
 COPY ./build/preprocessor.js ./build/build.sh ./build/embind.patch /cld-$TARGET/cld3/src/
 
 # temp: copy makefile until upstream merges PR
-COPY ./Makefile ./configure /cld-$TARGET/cld3/src/
+COPY ./build/Makefile ./build/configure /cld-$TARGET/cld3/src/
 
 # apply embind patch
-RUN /cld-$TARGET/cld3/src/ && git apply embind.patch
+RUN cd /cld-$TARGET/cld3/src/ && git apply embind.patch
 
 # Copy prebuilt protobuf-emscripten libraries to link against cld3
 RUN cp -r $TMPDIR/.libs /cld-$TARGET/cld3/src/ && \
