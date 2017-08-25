@@ -1,0 +1,70 @@
+diff --git a/src/nnet_language_identifier.cc b/src/nnet_language_identifier.cc
+index abc3950..2f31221 100644
+--- a/src/nnet_language_identifier.cc
++++ b/src/nnet_language_identifier.cc
+@@ -33,6 +33,37 @@ limitations under the License.
+ #include "task_context.h"
+ #include "workspace.h"
+ 
++#ifdef __EMSCRIPTEN__
++  #include <emscripten/bind.h>
++  using namespace emscripten;
++
++  // not sure why but llvm link strips and 'optimize' embind, does not export
++  // binding correctly. This function is dummy to ensure class is considered as in use,
++  // prevent strip out.
++  void dummy() {
++    chrome_lang_id::NNetLanguageIdentifier* dummy;
++    throw "should not be called";
++  }
++
++  // expose NNetLanguageIdentifier via embind
++  EMSCRIPTEN_BINDINGS(cld3) {
++    //bind NNetLanguageIdentifier::Result struct
++    value_object<chrome_lang_id::NNetLanguageIdentifier::Result>("Result")
++      .field("language", &chrome_lang_id::NNetLanguageIdentifier::Result::language)
++      .field("probability", &chrome_lang_id::NNetLanguageIdentifier::Result::probability)
++      .field("is_reliable", &chrome_lang_id::NNetLanguageIdentifier::Result::is_reliable)
++      .field("proportion", &chrome_lang_id::NNetLanguageIdentifier::Result::proportion)
++      ;
++
++    //bind NNetLanguageIdentifier class
++    class_<chrome_lang_id::NNetLanguageIdentifier>("NNetLanguageIdentifier")
++      .constructor<int, int>()
++      .function("FindLanguage", &chrome_lang_id::NNetLanguageIdentifier::FindLanguage)
++      .function("FindTopNMostFreqLangs", &chrome_lang_id::NNetLanguageIdentifier::FindTopNMostFreqLangs)
++      ;
++  }
++#endif
++
+ namespace chrome_lang_id {
+ namespace {
+ 
+@@ -377,4 +408,4 @@ string NNetLanguageIdentifier::SelectTextGivenBeginAndSize(
+   return output_text;
+ }
+ 
+-}  // namespace chrome_lang_id
++}  // namespace chrome_lang_id
+\ No newline at end of file
+diff --git a/src/nnet_language_identifier.h b/src/nnet_language_identifier.h
+index 820aba6..54b4090 100644
+--- a/src/nnet_language_identifier.h
++++ b/src/nnet_language_identifier.h
+@@ -173,3 +173,15 @@ class NNetLanguageIdentifier {
+ }  // namespace chrome_lang_id
+ 
+ #endif  // NNET_LANGUAGE_IDENTIFIER_H_
++
++#ifdef __EMSCRIPTEN__
++  #ifdef __cplusplus
++  extern "C" {
++  #endif
++
++    void dummy();
++
++  #ifdef __cplusplus
++  }
++  #endif
++#endif
+\ No newline at end of file
