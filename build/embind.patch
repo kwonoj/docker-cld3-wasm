@@ -1,8 +1,8 @@
 diff --git a/src/nnet_language_identifier.cc b/src/nnet_language_identifier.cc
-index abc3950..2f31221 100644
+index abc3950..880d3f8 100644
 --- a/src/nnet_language_identifier.cc
 +++ b/src/nnet_language_identifier.cc
-@@ -33,6 +33,37 @@ limitations under the License.
+@@ -33,6 +33,40 @@ limitations under the License.
  #include "task_context.h"
  #include "workspace.h"
  
@@ -28,6 +28,9 @@ index abc3950..2f31221 100644
 +      .field("proportion", &chrome_lang_id::NNetLanguageIdentifier::Result::proportion)
 +      ;
 +
++    //regisver std::vector<Result>
++    register_vector<chrome_lang_id::NNetLanguageIdentifier::Result>("ResultVector");
++
 +    //bind NNetLanguageIdentifier class
 +    class_<chrome_lang_id::NNetLanguageIdentifier>("NNetLanguageIdentifier")
 +      .constructor<int, int>()
@@ -40,7 +43,7 @@ index abc3950..2f31221 100644
  namespace chrome_lang_id {
  namespace {
  
-@@ -377,4 +408,4 @@ string NNetLanguageIdentifier::SelectTextGivenBeginAndSize(
+@@ -377,4 +411,4 @@ string NNetLanguageIdentifier::SelectTextGivenBeginAndSize(
    return output_text;
  }
  
