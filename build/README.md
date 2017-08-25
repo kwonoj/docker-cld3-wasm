@@ -1,0 +1,1 @@
+This folder contains makefile / config for build cld3 (until upstream merges https://github.com/google/cld3/pull/5), as well as patch for embind bindings for cld3.

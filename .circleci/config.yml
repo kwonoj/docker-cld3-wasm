@@ -1,0 +1,58 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/docker-cld3-wasm
+    docker:
+      - image: buildpack-deps:trusty
+    environment:
+      - ARTIFACT_DIR: /artifacts
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: Init submodules
+          command: |
+             git submodule update --init --recursive
+             mkdir -p /artifacts/out
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - run:
+          name: Build wasm
+          command: |
+            BRANCH=master
+            TARGET=wasm
+            # Build docker image, specify commit sha of cld3
+            docker build -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM --build-arg BRANCH=$BRANCH --build-arg TARGET=$TARGET .
+            # Run built docker image, specify container name same as image name
+            docker run --name cld3-wasm_0.1.$CIRCLE_BUILD_NUM -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/$BRANCH/$TARGET/cld3.js -s WASM=1"
+            # Copy build output
+            docker cp cld3-wasm_0.1.$CIRCLE_BUILD_NUM:/out $ARTIFACT_DIR/
+      - run:
+          name: Build asmjs
+          command: |
+            BRANCH=master
+            TARGET=asm
+            # Build docker image, specify commit sha of cld3
+            docker build -t cld3-asm_0.1.$CIRCLE_BUILD_NUM --build-arg BRANCH=$BRANCH --build-arg TARGET=$TARGET .
+            # Run built docker image, specify container name same as image name
+            docker run --name cld3-asm_0.1.$CIRCLE_BUILD_NUM -t cld3-asm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/$BRANCH/$TARGET/cld3.js"
+            # Copy build output
+            docker cp cld3-asm_0.1.$CIRCLE_BUILD_NUM:/out $ARTIFACT_DIR/
+      - run:
+          working_directory: /artifacts
+          name: Copy artifacts
+          command: |
+            # File copied from docker container has root access only, modify permission
+            sudo chmod -R go+wr $ARTIFACT_DIR
+            # Echo sha1
+            find ./out -type f -exec sha1sum {} \;
+            # Generate archive for convinience
+            tar -zcvf ./cld3-asm-$CIRCLE_BUILD_NUM-$CIRCLE_SHA1.tar.gz out
+      - store_artifacts:
+          path: /artifacts
