@@ -1,8 +1,8 @@
 diff --git a/src/nnet_language_identifier.cc b/src/nnet_language_identifier.cc
-index abc3950..880d3f8 100644
+index abc3950..a3ef6b9 100644
 --- a/src/nnet_language_identifier.cc
 +++ b/src/nnet_language_identifier.cc
-@@ -33,6 +33,40 @@ limitations under the License.
+@@ -33,6 +33,45 @@ limitations under the License.
  #include "task_context.h"
  #include "workspace.h"
  
@@ -34,6 +34,11 @@ index abc3950..880d3f8 100644
 +    //bind NNetLanguageIdentifier class
 +    class_<chrome_lang_id::NNetLanguageIdentifier>("NNetLanguageIdentifier")
 +      .constructor<int, int>()
++      .class_property("kMinNumBytesToConsider", &chrome_lang_id::NNetLanguageIdentifier::kMinNumBytesToConsider)
++      .class_property("kMaxNumBytesToConsider", &chrome_lang_id::NNetLanguageIdentifier::kMaxNumBytesToConsider)
++      .class_property("kMaxNumInputBytesToConsider", &chrome_lang_id::NNetLanguageIdentifier::kMaxNumInputBytesToConsider)
++      .class_property("kReliabilityThreshold", &chrome_lang_id::NNetLanguageIdentifier::kReliabilityThreshold)
++      .class_property("kReliabilityHrBsThreshold", &chrome_lang_id::NNetLanguageIdentifier::kReliabilityHrBsThreshold)
 +      .function("FindLanguage", &chrome_lang_id::NNetLanguageIdentifier::FindLanguage)
 +      .function("FindTopNMostFreqLangs", &chrome_lang_id::NNetLanguageIdentifier::FindTopNMostFreqLangs)
 +      ;
@@ -43,7 +48,7 @@ index abc3950..880d3f8 100644
  namespace chrome_lang_id {
  namespace {
  
-@@ -377,4 +411,4 @@ string NNetLanguageIdentifier::SelectTextGivenBeginAndSize(
+@@ -377,4 +416,4 @@ string NNetLanguageIdentifier::SelectTextGivenBeginAndSize(
    return output_text;
  }
  
