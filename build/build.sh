@@ -1,13 +1,10 @@
 #!/bin/bash
-### Simple script wraps invocation of emcc compiler, also prepares preprocessor
+### Simple script wraps invocation of emcc compiler
 ### for wasm binary lookup in node.js
 
 # It is important call in forms of ./build.sh -o outputfilePath ...rest,
 # as we'll pick up output filename from parameter
 outputFilename=$(basename $2)
-
-# Injecting -o option's filename into each targets preprocessor.
-# sed -i -e "s/___wasm_binary_name___/${outputFilename%.*}/g" ./preprocessor.js
 
 echo "building binary for $@"
 
@@ -24,5 +21,4 @@ em++ \
 --bind \
 ./.libs/libprotobuf.bc \
 ./libcld3.a \
---pre-js ./preprocessor.js \
 $@
