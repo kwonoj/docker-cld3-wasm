@@ -15,8 +15,8 @@ RUN mkdir -p /out/$BRANCH/$TARGET && mkdir /cld-$TARGET
 # Copy source from host
 COPY . /cld-$TARGET/
 
-# Copy build script and preprocessor into cld3 directory
-COPY ./build/preprocessor.js ./build/build.sh ./build/embind.patch /cld-$TARGET/cld3/src/
+# Copy build script into cld3 directory
+COPY ./build/build.sh ./build/embind.patch /cld-$TARGET/cld3/src/
 
 # temp: copy makefile until upstream merges PR
 COPY ./build/Makefile ./build/configure /cld-$TARGET/cld3/src/
