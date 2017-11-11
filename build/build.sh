@@ -10,8 +10,9 @@ echo "building binary for $@"
 
 # invoke emscripten to build binary targets. Check Dockerfile for build targets.
 em++ \
--O3 \
+-O1 \
 -Oz \
+--closure 1 \
 --emit-symbol-map \
 --llvm-lto 1 \
 -s MODULARIZE=1 \
