@@ -38,12 +38,13 @@ jobs:
           command: |
             BRANCH=master
             TARGET=asm
+            ## disable asm.js output
             # Build docker image, specify commit sha of cld3
-            docker build -t cld3-asm_0.1.$CIRCLE_BUILD_NUM --build-arg BRANCH=$BRANCH --build-arg TARGET=$TARGET .
+            #docker build -t cld3-asm_0.1.$CIRCLE_BUILD_NUM --build-arg BRANCH=$BRANCH --build-arg TARGET=$TARGET .
             # Run built docker image, specify container name same as image name
-            docker run --name cld3-asm_0.1.$CIRCLE_BUILD_NUM -t cld3-asm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/$BRANCH/$TARGET/cld3.js"
+            #docker run --name cld3-asm_0.1.$CIRCLE_BUILD_NUM -t cld3-asm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/$BRANCH/$TARGET/cld3.js"
             # Copy build output
-            docker cp cld3-asm_0.1.$CIRCLE_BUILD_NUM:/out $ARTIFACT_DIR/
+            #docker cp cld3-asm_0.1.$CIRCLE_BUILD_NUM:/out $ARTIFACT_DIR/
       - run:
           working_directory: /artifacts
           name: Copy artifacts
