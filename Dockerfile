@@ -10,7 +10,7 @@ RUN echo building for $BRANCH
 #RUN pacman --noconfirm -Syu
 
 # Setup output / build source path
-RUN mkdir -p /out/$BRANCH/$TARGET && mkdir /cld-$TARGET
+RUN mkdir -p /out && mkdir /cld-$TARGET
 
 # Copy source from host
 COPY . /cld-$TARGET/
