@@ -37,6 +37,7 @@ jobs:
             sudo chmod -R go+wr ~/build
             # Generate hash
             sha512sum ./out/cld3.js > ./out/cld3.js.sha512
+            sha512sum ./out/cld3.wasm > ./out/cld3.wasm.sha512
             # Generate archive for convinience
             tar -zcvf ./cld3-asm-$(echo $CIRCLE_SHA1 | cut -c -7).tar.gz out
             # Flatten file out path
