@@ -16,11 +16,10 @@ em++ \
 --llvm-lto 1 \
 -s MODULARIZE=1 \
 -s NO_EXIT_RUNTIME=1 \
+-s SINGLE_FILE=1 \
 -s ERROR_ON_UNDEFINED_SYMBOLS=1 \
 -s EXPORTED_FUNCTIONS="['_dummy']" \
 --bind \
 ./.libs/libprotobuf.bc \
 ./libcld3.a \
 $@
-
-#-s SINGLE_FILE=1 \
