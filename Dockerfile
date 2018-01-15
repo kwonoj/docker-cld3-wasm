@@ -1,8 +1,9 @@
-FROM ojkwon/arch-emscripten:857abbeb-protobuf
+FROM ojkwon/arch-emscripten:f7961a11-protobuf
 
 # Build time args
 ARG BRANCH=""
 ARG TARGET=""
+ARG PROTOBUF_VERSION=""
 
 RUN echo building for $BRANCH
 
@@ -27,8 +28,8 @@ RUN cd /cld-$TARGET/cld3/src/ && git apply embind.patch
 # Copy prebuilt protobuf-emscripten libraries to link against cld3
 RUN cp -r $TMPDIR/.libs /cld-$TARGET/cld3/src/ && \
     mv /cld-$TARGET/cld3/src/.libs/libprotobuf.so        /cld-$TARGET/cld3/src/.libs/libprotobuf.bc && \
-    mv /cld-$TARGET/cld3/src/.libs/libprotobuf.so.11     /cld-$TARGET/cld3/src/.libs/libprotobuf.bc.11 && \
-    mv /cld-$TARGET/cld3/src/.libs/libprotobuf.so.11.0.0 /cld-$TARGET/cld3/src/.libs/libprotobuf.bc.11.0.0 && \
+    mv /cld-$TARGET/cld3/src/.libs/libprotobuf.so.15     /cld-$TARGET/cld3/src/.libs/libprotobuf.bc.15 && \
+    mv /cld-$TARGET/cld3/src/.libs/libprotobuf.so.15.0.1 /cld-$TARGET/cld3/src/.libs/libprotobuf.bc.15.0.1 && \
     cp -r $TMPDIR/.libs /cld-$TARGET/cld3/src/
 
 # Set workdir to cld3
@@ -48,7 +49,7 @@ RUN protoc --version
 RUN echo running make && \
   emmake make \
   CXXFLAGS='--bind -pedantic'\
-  PROTOBUF_INCLUDE=-I$TMPDIR/protobuf-emscripten/3.1.0/src \
-  PROTOBUF_LIBS='-L/cld-$TARGET/protobuf-emscripten/3.1.0/src/.libs -lprotobuf' libcld3.a
+  PROTOBUF_INCLUDE=-I$TMPDIR/protobuf/src \
+  PROTOBUF_LIBS='-L/cld-$TARGET/protobuf/src/.libs -lprotobuf' libcld3.a
 
 CMD echo dockerfile ready
