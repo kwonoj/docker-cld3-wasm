@@ -20,6 +20,6 @@ em++ \
 -s ERROR_ON_UNDEFINED_SYMBOLS=1 \
 -s EXPORTED_FUNCTIONS="['_dummy']" \
 --bind \
-./.libs/libprotobuf.bc \
 ./libcld3.a \
+$TMPDIR/.libs/libprotobuf.a \
 $@

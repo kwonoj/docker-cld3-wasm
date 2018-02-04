@@ -24,7 +24,7 @@ jobs:
             BRANCH=master
             TARGET=wasm
             # Build docker image, specify commit sha of cld3
-            docker build -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM --build-arg BRANCH=$BRANCH --build-arg TARGET=$TARGET --build-arg PROTOBUF_VERSION=3.5.1.1 .
+            docker build -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM --build-arg BRANCH=$BRANCH --build-arg TARGET=$TARGET .
             # Run built docker image, specify container name same as image name
             docker run --name cld3-wasm_0.1.$CIRCLE_BUILD_NUM -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/cld3.js -s WASM=1"
             # Copy build output
