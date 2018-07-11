@@ -1,4 +1,4 @@
-FROM ojkwon/arch-emscripten:53e9ee60-protobuf
+FROM ojkwon/arch-emscripten:f3d0fe6b-protobuf
 
 # Build time args
 ARG BRANCH=""
