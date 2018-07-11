@@ -2,7 +2,7 @@
 defaults: &defaults
   working_directory: ~/docker-cld3-wasm
   docker:
-  - image: circleci/golang:1.8.1
+  - image: circleci/golang:1.10.3-stretch-browsers
 
 version: 2
 jobs:
@@ -19,16 +19,28 @@ jobs:
              # generate build artifact folder
              mkdir -p ~/build
       - run:
-          name: Build wasm cld3
+          name: Build docker image for wasm cld3
           command: |
             BRANCH=master
             TARGET=wasm
             # Build docker image, specify commit sha of cld3
             docker build -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM --build-arg BRANCH=$BRANCH --build-arg TARGET=$TARGET .
-            # Run built docker image, specify container name same as image name
-            docker run --name cld3-wasm_0.1.$CIRCLE_BUILD_NUM -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/cld3.js -s WASM=1"
+      - run:
+          name: Build wasm cld3 for browser
+          command: |
+            ENVIRONMENT=web
+            # Run built docker image
+            docker run --name cld3-wasm_0.1.$CIRCLE_BUILD_NUM$ENVIRONMENT -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/cld3_web.js -s WASM=1 -s ENVIRONMENT=$ENVIRONMENT"
             # Copy build output
-            docker cp cld3-wasm_0.1.$CIRCLE_BUILD_NUM:/out ~/build
+            docker cp cld3-wasm_0.1.$CIRCLE_BUILD_NUM$ENVIRONMENT:/out ~/build
+      - run:
+          name: Build wasm cld3 for node
+          command: |
+            ENVIRONMENT=node
+            # Run built docker image
+            docker run --name cld3-wasm_0.1.$CIRCLE_BUILD_NUM$ENVIRONMENT -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/cld3_node.js -s WASM=1 -s ENVIRONMENT=$ENVIRONMENT"
+            # Copy build output
+            docker cp cld3-wasm_0.1.$CIRCLE_BUILD_NUM$ENVIRONMENT:/out ~/build
       - run:
           working_directory: ~/build
           name: Copy artifacts
@@ -36,7 +48,8 @@ jobs:
             # File copied from docker container has root access only, modify permission
             sudo chmod -R go+wr ~/build
             # Generate hash
-            sha512sum ./out/cld3.js > ./out/cld3.js.sha512
+            sha512sum ./out/cld3_web.js > ./out/cld3_web.js.sha512
+            sha512sum ./out/cld3_node.js > ./out/cld3_node.js.sha512
             # Generate archive for convinience
             tar -zcvf ./cld3-asm-$(echo $CIRCLE_SHA1 | cut -c -7).tar.gz out
             # Flatten file out path
