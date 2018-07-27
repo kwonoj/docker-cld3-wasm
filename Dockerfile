@@ -9,11 +9,11 @@ RUN echo building for $BRANCH
 # Install dependencies - enable if needed
 #RUN pacman --noconfirm -Syu
 
-# Setup output / build source path
-RUN mkdir -p /out && mkdir /cld-$TARGET
+# Setup output
+RUN mkdir -p /out
 
-# Copy source from host
-COPY . /cld-$TARGET/
+# Clone source from host
+RUN git clone https://github.com/google/cld3.git /cld-$TARGET/cld3
 
 # Copy build script into cld3 directory
 COPY ./build/build.sh ./build/embind.patch /cld-$TARGET/cld3/src/
@@ -21,14 +21,14 @@ COPY ./build/build.sh ./build/embind.patch /cld-$TARGET/cld3/src/
 # temp: copy makefile until upstream cld3 merges PR
 COPY ./build/Makefile ./build/configure /cld-$TARGET/cld3/src/
 
-# apply embind patch
-RUN cd /cld-$TARGET/cld3/src/ && git apply embind.patch
-
 # Set workdir to cld3
 WORKDIR /cld-$TARGET/cld3/src
 
 # Checkout branch to build
 RUN git checkout $BRANCH && git show --summary
+
+# apply embind patch
+RUN cd /cld-$TARGET/cld3/src/ && git apply embind.patch
 
 # Configure & make via emscripten
 RUN protoc --version
