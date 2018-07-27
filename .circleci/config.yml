@@ -13,11 +13,9 @@ jobs:
       - setup_remote_docker
       - checkout
       - run:
-          name: Init submodules
-          command: |
-             git submodule update --init --recursive
-             # generate build artifact folder
-             mkdir -p ~/build
+          name: Generate build artifact folder
+          command: mkdir -p ~/build
+
       - run:
           name: Build docker image for wasm cld3
           command: |
