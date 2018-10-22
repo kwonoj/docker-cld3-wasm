@@ -28,7 +28,7 @@ jobs:
           command: |
             ENVIRONMENT=web
             # Run built docker image
-            docker run --name cld3-wasm_0.1.$CIRCLE_BUILD_NUM$ENVIRONMENT -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/cld3_web.js -s WASM=1 -s ENVIRONMENT=$ENVIRONMENT"
+            docker run --name cld3-wasm_0.1.$CIRCLE_BUILD_NUM$ENVIRONMENT -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/cld3_$ENVIRONMENT.js -s ENVIRONMENT=$ENVIRONMENT"
             # Copy build output
             docker cp cld3-wasm_0.1.$CIRCLE_BUILD_NUM$ENVIRONMENT:/out ~/build
       - run:
@@ -36,7 +36,7 @@ jobs:
           command: |
             ENVIRONMENT=node
             # Run built docker image
-            docker run --name cld3-wasm_0.1.$CIRCLE_BUILD_NUM$ENVIRONMENT -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/cld3_node.js -s WASM=1 -s ENVIRONMENT=$ENVIRONMENT"
+            docker run --name cld3-wasm_0.1.$CIRCLE_BUILD_NUM$ENVIRONMENT -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/cld3_$ENVIRONMENT.js -s ENVIRONMENT=$ENVIRONMENT"
             # Copy build output
             docker cp cld3-wasm_0.1.$CIRCLE_BUILD_NUM$ENVIRONMENT:/out ~/build
       - run:
@@ -46,8 +46,10 @@ jobs:
             # File copied from docker container has root access only, modify permission
             sudo chmod -R go+wr ~/build
             # Generate hash
-            sha512sum ./out/cld3_web.js > ./out/cld3_web.js.sha512
-            sha512sum ./out/cld3_node.js > ./out/cld3_node.js.sha512
+            for filename in ./build/*; do
+              sha512sum $filename > $filename.sha512
+            done
+
             # Generate archive for convinience
             tar -zcvf ./cld3-asm-$(echo $CIRCLE_SHA1 | cut -c -7).tar.gz out
             # Flatten file out path
