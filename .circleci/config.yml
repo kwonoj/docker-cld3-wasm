@@ -24,27 +24,30 @@ jobs:
             # Build docker image, specify commit sha of cld3
             docker build -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM --build-arg BRANCH=$BRANCH --build-arg TARGET=$TARGET .
       - run:
-          name: Build wasm cld3 for browser
+          name: Build wasm binary
           command: |
-            ENVIRONMENT=web
             # Run built docker image
-            docker run --name cld3-wasm_0.1.$CIRCLE_BUILD_NUM$ENVIRONMENT -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/cld3_$ENVIRONMENT.js -s ENVIRONMENT=$ENVIRONMENT"
+            docker run --name cld3-wasm -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/cld3.js"
             # Copy build output
-            docker cp cld3-wasm_0.1.$CIRCLE_BUILD_NUM$ENVIRONMENT:/out ~/build
+            docker cp cld3-wasm:/out ~/build
       - run:
-          name: Build wasm cld3 for node
+          name: Build asm.js binary
           command: |
-            ENVIRONMENT=node
             # Run built docker image
-            docker run --name cld3-wasm_0.1.$CIRCLE_BUILD_NUM$ENVIRONMENT -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/cld3_$ENVIRONMENT.js -s ENVIRONMENT=$ENVIRONMENT"
+            docker run --name cld3-asm -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/cld3-asm.js -s WASM=0"
             # Copy build output
-            docker cp cld3-wasm_0.1.$CIRCLE_BUILD_NUM$ENVIRONMENT:/out ~/build
+            docker cp cld3-asm:/out ~/build
       - run:
           working_directory: ~/build
           name: Copy artifacts
           command: |
             # File copied from docker container has root access only, modify permission
             sudo chmod -R go+wr ~/build
+            # https://github.com/kwonoj/docker-hunspell-wasm/issues/63
+            for filename in ./out/*.js; do
+              sed -i 's/throw new Error("Module.ENVIRONMENT has been deprecated. To force the environment, use the ENVIRONMENT compile-time option (for example, -s ENVIRONMENT=web or -s ENVIRONMENT=node)")/const ISNODE = Module["ENVIRONMENT"] === "NODE";ENVIRONMENT_IS_NODE = ISNODE;ENVIRONMENT_IS_WEB = !ISNODE;/g' $filename
+            done
+
             # Generate hash
             for filename in ./out/*; do
               sha512sum $filename > $filename.sha512

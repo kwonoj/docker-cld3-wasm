@@ -1,4 +1,4 @@
-FROM ojkwon/arch-emscripten:6b0d7406-protobuf
+FROM ojkwon/arch-emscripten:6c357625-protobuf
 
 # Build time args
 ARG BRANCH=""
@@ -16,7 +16,7 @@ RUN mkdir -p /out
 RUN git clone https://github.com/google/cld3.git /cld-$TARGET/cld3
 
 # Copy build script into cld3 directory
-COPY ./build/build.sh ./build/embind.patch /cld-$TARGET/cld3/src/
+COPY ./build/build.sh ./build/cwrap.patch /cld-$TARGET/cld3/src/
 
 # temp: copy makefile until upstream cld3 merges PR
 COPY ./build/Makefile ./build/configure /cld-$TARGET/cld3/src/
@@ -28,7 +28,7 @@ WORKDIR /cld-$TARGET/cld3/src
 RUN git checkout $BRANCH && git show --summary
 
 # apply embind patch
-RUN cd /cld-$TARGET/cld3/src/ && git apply embind.patch
+RUN cd /cld-$TARGET/cld3/src/ && git apply cwrap.patch
 
 # Configure & make via emscripten
 RUN protoc --version
@@ -41,7 +41,7 @@ RUN protoc --version
 # For libprotobuf to link, use prebuilt via arch-emscripten under $TMPDIR/.libs
 RUN echo running make && \
   emmake make \
-  CXXFLAGS='--bind -pedantic'\
+  CXXFLAGS='-std=c++11 -pedantic'\
   PROTOBUF_INCLUDE=-I$TMPDIR/protobuf/src \
   PROTOBUF_LIBS='-L$TMPDIR/.libs -lprotobuf' libcld3.a
 
