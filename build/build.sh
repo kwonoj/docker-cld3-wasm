@@ -44,5 +44,5 @@ em++ \
 -s EXPORTED_FUNCTIONS="$CLD_EXPORT_FUNCTIONS" \
 -s EXTRA_EXPORTED_RUNTIME_METHODS="$EXPORT_RUNTIME" \
 ./libcld3.a \
-$TMPDIR/.libs/libprotobuf.a \
+$TMPDIR/.libs/libprotobuf-lite.so \
 $@
