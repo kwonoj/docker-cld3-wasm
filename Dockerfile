@@ -43,6 +43,6 @@ RUN echo running make && \
   emmake make \
   CXXFLAGS='-std=c++11 -pedantic'\
   PROTOBUF_INCLUDE=-I$TMPDIR/protobuf/src \
-  PROTOBUF_LIBS='-L$TMPDIR/.libs -lprotobuf' libcld3.a
+  PROTOBUF_LIBS='-L$TMPDIR/.libs -lprotobuf-lite' libcld3.a
 
 CMD echo dockerfile ready

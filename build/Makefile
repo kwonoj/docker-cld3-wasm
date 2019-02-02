@@ -4,7 +4,7 @@
 # Your protobuf options
 PROTOC ?= protoc
 PROTOBUF_INCLUDE ?= -I/usr/local/include
-PROTOBUF_LIBS ?= -L/usr/local/lib -lprotobuf
+PROTOBUF_LIBS ?= -L/usr/local/lib -lprotobuf-lite
 
 # Compiler options
 CXX ?= g++
@@ -33,7 +33,7 @@ TESTS = script_detector_test relevant_script_feature_test script_span/getonescri
 all: check
 
 libcld3.a: $(LIBCLD3)
-	$(AR) rcs libcld3.a $(LIBCLD3)	
+	$(AR) rcs libcld3.a $(LIBCLD3)
 
 $(LIBCLD3): cld_3/protos/feature_extractor.pb.h cld_3/protos/sentence.pb.h cld_3/protos/task_spec.pb.h
 
