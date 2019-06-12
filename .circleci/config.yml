@@ -43,10 +43,6 @@ jobs:
           command: |
             # File copied from docker container has root access only, modify permission
             sudo chmod -R go+wr ~/build
-            # https://github.com/kwonoj/docker-hunspell-wasm/issues/63
-            for filename in ./out/*.js; do
-              sed -i 's/throw new Error("Module.ENVIRONMENT has been deprecated. To force the environment, use the ENVIRONMENT compile-time option (for example, -s ENVIRONMENT=web or -s ENVIRONMENT=node)")/const ISNODE = Module["ENVIRONMENT"] === "NODE";ENVIRONMENT_IS_NODE = ISNODE;ENVIRONMENT_IS_WEB = !ISNODE;/g' $filename
-            done
 
             # Generate hash
             for filename in ./out/*; do

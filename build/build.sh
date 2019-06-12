@@ -34,7 +34,7 @@ em++ \
 -O2 \
 --emit-symbol-map \
 --llvm-lto 1 \
--s ENVIRONMENT=web,node \
+-s ENVIRONMENT=web \
 -s MODULARIZE=1 \
 -s NO_EXIT_RUNTIME=1 \
 -s ASSERTIONS=1 \
