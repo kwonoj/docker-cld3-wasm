@@ -22,21 +22,23 @@ jobs:
             BRANCH=master
             TARGET=wasm
             # Build docker image, specify commit sha of cld3
-            docker build -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM --build-arg BRANCH=$BRANCH --build-arg TARGET=$TARGET .
+            docker build -t cld3-wasm-$CIRCLE_BUILD_NUM --build-arg BRANCH=$BRANCH --build-arg TARGET=$TARGET .
       - run:
-          name: Build wasm binary
+          name: Build wasm binary for node environment
           command: |
+            ENVIRONMENT=node
             # Run built docker image
-            docker run --name cld3-wasm -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/cld3.js"
+            docker run --name $CIRCLE_BUILD_NUM$ENVIRONMENT -t cld3-wasm-$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/cld3_$ENVIRONMENT.js -s ENVIRONMENT=$ENVIRONMENT"
             # Copy build output
-            docker cp cld3-wasm:/out ~/build
+            docker cp $CIRCLE_BUILD_NUM$ENVIRONMENT:/out ~/build
       - run:
-          name: Build asm.js binary
+          name: Build wasm binary for web environment
           command: |
+            ENVIRONMENT=web,worker
             # Run built docker image
-            docker run --name cld3-asm -t cld3-wasm_0.1.$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/cld3-asm.js -s WASM=0"
+            docker run --name $CIRCLE_BUILD_NUM-web -t cld3-wasm-$CIRCLE_BUILD_NUM /bin/bash -l -c "./build.sh -o /out/cld3_browser.js -s ENVIRONMENT=$ENVIRONMENT"
             # Copy build output
-            docker cp cld3-asm:/out ~/build
+            docker cp $CIRCLE_BUILD_NUM-web:/out ~/build
       - run:
           working_directory: ~/build
           name: Copy artifacts
