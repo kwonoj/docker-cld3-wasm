@@ -1,8 +1,8 @@
 diff --git a/src/nnet_language_identifier.cc b/src/nnet_language_identifier.cc
-index abc3950..27e2e61 100644
+index c1fa755..1d0c1df 100644
 --- a/src/nnet_language_identifier.cc
 +++ b/src/nnet_language_identifier.cc
-@@ -378,3 +378,73 @@ string NNetLanguageIdentifier::SelectTextGivenBeginAndSize(
+@@ -386,3 +386,88 @@ string NNetLanguageIdentifier::SelectTextGivenBeginAndSize(
  }
  
  }  // namespace chrome_lang_id
@@ -10,16 +10,31 @@ index abc3950..27e2e61 100644
 +namespace {
 +
 +// Assign Result value to LanguageResult struct, allow js interop pointer to its values.
-+// Function does not allocate memory by itself - caller (findLanguage, findTopNMostFreqLangs)
-+// in javascript must allocate.
++// Function does not allocate memory of LanguageResult by itself - caller (findLanguage, findTopNMostFreqLangs)
++// in javascript must allocate. In opposite, pointers to string, arrays are allocated internally and must be freed.
 +void allocate_result(chrome_lang_id::NNetLanguageIdentifier::Result result, LanguageResult* out_result) {
-+  char * cstr = new char [result.language.length()+1];
++  char * cstr = (char *) malloc(result.language.length()+1);
 +  std::strcpy (cstr, result.language.c_str());
 +
 +  out_result->is_reliable = result.is_reliable;
 +  out_result->probability = result.probability;
 +  out_result->proportion = result.proportion;
 +  out_result->language = cstr;
++  out_result->byte_ranges_size = result.byte_ranges.size();
++
++  chrome_lang_id::NNetLanguageIdentifier::SpanInfo** ranges =
++          (chrome_lang_id::NNetLanguageIdentifier::SpanInfo **)
++          malloc(sizeof(chrome_lang_id::NNetLanguageIdentifier::SpanInfo) * result.byte_ranges.size());
++
++  for (auto i = 0; i < result.byte_ranges.size(); i++) {
++      chrome_lang_id::NNetLanguageIdentifier::SpanInfo* range = (chrome_lang_id::NNetLanguageIdentifier::SpanInfo *)
++              malloc(sizeof(chrome_lang_id::NNetLanguageIdentifier::SpanInfo));
++
++      memcpy(range, &result.byte_ranges[i],sizeof(*range));
++      ranges[i] = range;
++  }
++
++  out_result->byte_ranges = ranges;
 +}
 +
 +// Flatten std::vector<Result> to Array<LanguageResult>. Same as `allocate_result`, javascript caller must
@@ -77,10 +92,10 @@ index abc3950..27e2e61 100644
 +    return munge_vector(results, out_results);
 +}
 diff --git a/src/nnet_language_identifier.h b/src/nnet_language_identifier.h
-index 820aba6..4fe86fa 100644
+index e5eb862..b17d8a6 100644
 --- a/src/nnet_language_identifier.h
 +++ b/src/nnet_language_identifier.h
-@@ -173,3 +173,55 @@ class NNetLanguageIdentifier {
+@@ -189,3 +189,57 @@ class NNetLanguageIdentifier {
  }  // namespace chrome_lang_id
  
  #endif  // NNET_LANGUAGE_IDENTIFIER_H_
@@ -103,6 +118,8 @@ index 820aba6..4fe86fa 100644
 +    float probability = 0.0;
 +    bool is_reliable = false;
 +    float proportion = 0.0;
++    int byte_ranges_size = 0;
++    chrome_lang_id::NNetLanguageIdentifier::SpanInfo** byte_ranges = NULL;
 +} LanguageResult;
 +
 +// return sizeof(LanguageResult) for pointer interop
