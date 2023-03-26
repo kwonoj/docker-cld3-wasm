@@ -2,7 +2,7 @@
 defaults: &defaults
   working_directory: ~/docker-cld3-wasm
   docker:
-  - image: circleci/golang:1.10.3-stretch-browsers
+  - image: circleci/golang:1.20.2
 
 version: 2
 jobs:
