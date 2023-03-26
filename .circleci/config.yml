@@ -2,7 +2,7 @@
 defaults: &defaults
   working_directory: ~/docker-cld3-wasm
   docker:
-  - image: circleci/golang:1.18
+  - image: circleci/golang:1.17
 
 version: 2
 jobs:
@@ -76,7 +76,7 @@ jobs:
           name: Create Release
           command: |
             go get github.com/tcnksm/ghr
-            ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace $CIRCLE_TAG ~/build
+            ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace $CIRCLE_TAG v.1.0.4 ~/build
 
 workflows:
   version: 2
