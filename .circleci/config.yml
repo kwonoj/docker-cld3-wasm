@@ -2,7 +2,7 @@
 defaults: &defaults
   working_directory: ~/docker-cld3-wasm
   docker:
-  - image: circleci/golang:1.17
+  - image: cimg/go:1.18
 
 version: 2
 jobs:
