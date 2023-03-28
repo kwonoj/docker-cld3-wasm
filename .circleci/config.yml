@@ -75,7 +75,7 @@ jobs:
       - run:
           name: Create Release
           command: |
-            go mod init ~/build
+            go mod init `pwd`
             go get github.com/tcnksm/ghr
             ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace $CIRCLE_TAG ~/build
 
