@@ -76,10 +76,6 @@ jobs:
           name: Create Release
           command: |
             go install github.com/tcnksm/ghr@latest
-            echo $GITHUB_TOKEN
-            echo $CIRCLE_PROJECT_USERNAME
-            echo $CIRCLE_PROJECT_REPONAME
-            echo $CIRCLE_TAG
             ghr -v
             ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace $CIRCLE_TAG ~/build
 
