@@ -19,7 +19,7 @@ jobs:
       - run:
           name: Build docker image for wasm cld3
           command: |
-            BRANCH=master
+            BRANCH=06f695f1c8ee530104416aab5dcf2d6a1414a56a
             TARGET=wasm
             # Build docker image, specify commit sha of cld3
             docker build -t cld3-wasm-$CIRCLE_BUILD_NUM --build-arg BRANCH=$BRANCH --build-arg TARGET=$TARGET .
