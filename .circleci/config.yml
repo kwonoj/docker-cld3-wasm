@@ -83,8 +83,7 @@ jobs:
       - run:
           name: Create Release
           command: |
-            go get -u github.com/google/go-github/v47/github
-            go get github.com/tcnksm/ghr
+            go get github.com/tcnksm/ghr-0.13.0
             ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace $CIRCLE_TAG ~/build
 
 workflows:
