@@ -27,7 +27,7 @@ jobs:
       - run:
           name: Build docker image for wasm cld3
           command: |
-            BRANCH=06f695f1c8ee530104416aab5dcf2d6a1414a56a
+            BRANCH=master
             TARGET=wasm
             # Build docker image, specify commit sha of cld3
             docker build -t cld3-wasm-$CIRCLE_BUILD_NUM --build-arg BRANCH=$BRANCH --build-arg TARGET=$TARGET .
@@ -83,7 +83,7 @@ jobs:
       - run:
           name: Create Release
           command: |
-            go install github.com/tcnksm/ghr@latest
+            go get github.com/tcnksm/ghr
             ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace $CIRCLE_TAG ~/build
 
 workflows:
