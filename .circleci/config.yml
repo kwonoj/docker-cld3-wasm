@@ -2,7 +2,7 @@
 defaults: &defaults
   working_directory: ~/docker-cld3-wasm
   docker:
-    - image: cimg/go:1.16-browsers
+    - image: cimg/go:1.17-browsers
   steps:
     - browser-tools/install-browser-tools
     - checkout
