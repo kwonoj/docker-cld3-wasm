@@ -2,15 +2,7 @@
 defaults: &defaults
   working_directory: ~/docker-cld3-wasm
   docker:
-    - image: cimg/go:1.10-browsers
-  steps:
-    - browser-tools/install-browser-tools
-    - checkout
-    - run: |
-        go version
-        node --version
-        java --version
-        google-chrome --version
+    - image: circleci/golang:1.10.3-stretch-browsers
 
 version: 2
 jobs:
@@ -83,7 +75,7 @@ jobs:
       - run:
           name: Create Release
           command: |
-            go get github.com/tcnksm/ghr-0.13.0
+            go get github.com/tcnksm/ghr@0.13.0
             ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace $CIRCLE_TAG ~/build
 
 workflows:
